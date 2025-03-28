@@ -51,18 +51,6 @@
         .folder-list li a:hover {
             text-decoration: underline;
         }
-        .input-group {
-            margin-top: 20px;
-            text-align: center;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 300px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
         .message {
             margin-top: 20px;
             padding: 10px;
@@ -78,31 +66,15 @@
 <body>
     <div class="container">
         <h1>إدارة المجلدات</h1>
-
-        <button onclick="showCreateForm()">إنشاء ملف جديد</button>
         <button onclick="showFolders()">عرض المجلدات</button>
         <button onclick="deleteAll()">حذف جميع المجلدات</button>
-
-        <div id="createForm" style="display: none;">
-            <h2>إنشاء ملف جديد</h2>
-            <input type="text" id="link" placeholder="أدخل الرابط هنا" />
-            <button onclick="createFile()">إنشاء</button>
-        </div>
-
         <div id="folderList" class="folder-list" style="display: none;">
             <h2>المجلدات الموجودة</h2>
             <ul id="folders"></ul>
         </div>
-
         <div id="message" class="message"></div>
     </div>
-
     <script>
-        function showCreateForm() {
-            document.getElementById('createForm').style.display = 'block';
-            document.getElementById('folderList').style.display = 'none';
-        }
-
         function showFolders() {
             fetch('process.php?action=list')
                 .then(response => response.json())
@@ -120,37 +92,13 @@
                         folderList.innerHTML = 'لا توجد مجلدات لعرضها.';
                     }
                     document.getElementById('folderList').style.display = 'block';
-                    document.getElementById('createForm').style.display = 'none';
                 });
         }
-
-        function createFile() {
-            let link = document.getElementById('link').value;
-            if (link === '') {
-                showMessage('❌ يجب إدخال رابط!', 'error');
-                return;
-            }
-
-            fetch('process.php?action=create', {
-                method: 'POST',
-                body: new URLSearchParams({ link })
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (data.includes('http')) {
-                    showMessage(`✅ تم إنشاء الملف بنجاح! رابط المجلد: <a href="${data}" target="_blank">${data}</a>`);
-                } else {
-                    showMessage(data, 'error');
-                }
-            });
-        }
-
         function deleteAll() {
             fetch('process.php?action=delete_all', { method: 'POST' })
                 .then(response => response.text())
                 .then(data => showMessage(data));
         }
-
         function showMessage(message, type = '') {
             let messageBox = document.getElementById('message');
             messageBox.classList.remove('error');
@@ -159,9 +107,6 @@
             }
             messageBox.innerHTML = message;
             messageBox.style.display = 'block';
-            setTimeout(() => {
-                messageBox.style.display = 'none';
-            }, 5000);
         }
     </script>
 </body>
